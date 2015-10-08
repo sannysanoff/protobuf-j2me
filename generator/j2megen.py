@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from mako.template import Template
 from mako.runtime import Context
+from pprint import pprint
 from StringIO import StringIO
 from plugin_pb2 import *
 from google.protobuf.descriptor_pb2 import *
@@ -70,6 +71,7 @@ def parse_type(t):
   m.name = t.name
   m.nested_enums = t.enum_type
   m.nested_types = []
+  # pprint(m.__dict__, stream=sys.stderr)
   
   for nested in t.nested_type:
     m.nested_types.append(parse_type(nested))
@@ -77,6 +79,7 @@ def parse_type(t):
   m.fields = []
   for field in t.field:
     f = FieldDescription()
+    # pprint(field.type, stream=sys.stderr)
     if field.type == FieldDescriptorProto.TYPE_MESSAGE:
       if field.type_name.startswith('.'):
         f.type = fully_qualified_name2(field.type_name)

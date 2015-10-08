@@ -1,6 +1,6 @@
 package ${package};
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.io.IOException;
 
 import com.ponderingpanda.protobuf.*;
@@ -21,6 +21,27 @@ public class ${root_type.name} implements Message {
   % endfor
   
   % for enum in type.nested_enums:
+
+/*
+    
+    public enum ${enum.name} {
+    % for value in enum.value:
+	${value.name},
+    % endfor
+	;
+
+        static ${enum.name}[] vals = values();
+
+        ${enum.name} valueOf(int v) {
+            for (${enum.name} n : vals) {
+                if (n.ordinal() == v) return n;
+            }
+            return null;
+        }
+
+    }
+*/
+
     // ${enum.name}
     % for value in enum.value:
     public static final int ${value.name} = ${value.number};
@@ -29,7 +50,7 @@ public class ${root_type.name} implements Message {
   
   % for field in type.fields:
     % if field.repeated:
-    protected Vector ${field.name} = new Vector(); // ${field.number}
+    protected ArrayList<${field.type}> ${field.name} = new ArrayList<${field.type}>(); // ${field.number}
     % else:
     protected ${field.type} ${field.name}; // ${field.number}
       % if field.optional and not field.is_message:
@@ -70,7 +91,7 @@ public class ${root_type.name} implements Message {
     % endif
   % else:
     public void add${field.Name}(${field.type} value) {
-        this.${field.name}.addElement(${field.box_s}value${field.box_e});
+        this.${field.name}.add(${field.box_s}value${field.box_e});
     }
 
     public int get${field.Name}Count() {
@@ -78,14 +99,15 @@ public class ${root_type.name} implements Message {
     }
 
     public ${field.type} get${field.Name}(int index) {
-        return ${field.unbox_s}this.${field.name}.elementAt(index)${field.unbox_e};
+        // return ${field.unbox_s}this.${field.name}.get(index)${field.unbox_e};
+        return this.${field.name}.get(index)${field.unbox_e};
     }
 
-    public Vector get${field.Name}Vector() {
+    public ArrayList<${field.type}> get${field.Name}ArrayList() {
         return this.${field.name};
     }
 
-    public void set${field.Name}Vector(Vector value) {
+    public void set${field.Name}ArrayList(ArrayList<${field.type}> value) {
         this.${field.name} = value;
     }
   % endif
